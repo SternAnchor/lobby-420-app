@@ -27,7 +27,8 @@ spec:
               mountPath: /app/uploads
       volumes:
         - name: uploads
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: lobby420-uploads
       imagePullSecrets:
         - name: do-registry
 ---
@@ -78,3 +79,15 @@ spec:
                 name: lobby420
                 port:
                   number: 80
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lobby420-uploads
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: do-block-storage-retain
+  resources:
+    requests:
+      storage: 5Gi
