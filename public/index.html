@@ -138,12 +138,16 @@
     .top-upload-link {
       position: fixed;
       top: 1rem;
-      right: 1.5rem;
+      left: 0;
+      right: 0;
       z-index: 50;
       display: flex;
       gap: 0.5rem;
+      justify-content: center;
+      pointer-events: none;
     }
     .top-btn {
+      pointer-events: auto;
       background: rgba(201,169,110,0.15);
       border: 1px solid rgba(201,169,110,0.3);
       color: var(--gold);
@@ -330,7 +334,7 @@
 <body>
 
   <div class="top-upload-link">
-    <button class="top-btn" onclick="document.getElementById('topFileInput').click()">📸 Upload</button>
+    <button class="top-btn" onclick="document.getElementById('topFileInput').click()">📸 Add Pics</button>
     <button class="top-btn" onclick="startSlideshow()">▶ Slideshow</button>
   </div>
   <input type="file" id="topFileInput" multiple accept="image/*" capture="environment" style="display:none">
