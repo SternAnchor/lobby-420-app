@@ -261,6 +261,26 @@
 
   <div class="divider"><div class="divider-line"></div></div>
 
+  <!-- Upload Section -->
+  <div class="upload-section">
+    <h2>Drop Your Photos</h2>
+    <p class="subtitle">Got pics from the lobby? The bar? The aftermath? Upload them here.</p>
+
+    <div class="upload-zone" id="uploadZone">
+      <div class="icon">📸</div>
+      <p>Tap to upload or drag photos here</p>
+      <p class="hint">JPG, PNG, WEBP — up to 15MB each, 10 at a time</p>
+    </div>
+    <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+
+    <div class="upload-progress" id="uploadProgress">Uploading...</div>
+
+    <div class="community-gallery" id="communityGallery"></div>
+    <div class="empty-state" id="emptyState" style="display:none">No uploads yet. Be the first.</div>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
   <section>
     <h2>The Night</h2>
     <div class="cards">
@@ -302,26 +322,6 @@
   <div class="cta">
     <h2>Currently in Progress</h2>
     <p>Hotel lobby bar → Hangar 24 Friday afternoon → the big shebang Friday night. Keep up.</p>
-  </div>
-
-  <div class="divider"><div class="divider-line"></div></div>
-
-  <!-- Upload Section -->
-  <div class="upload-section">
-    <h2>Drop Your Photos</h2>
-    <p class="subtitle">Got pics from the lobby? The bar? The aftermath? Upload them here.</p>
-
-    <div class="upload-zone" id="uploadZone">
-      <div class="icon">📸</div>
-      <p>Tap to upload or drag photos here</p>
-      <p class="hint">JPG, PNG, WEBP — up to 15MB each, 10 at a time</p>
-    </div>
-    <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
-
-    <div class="upload-progress" id="uploadProgress">Uploading...</div>
-
-    <div class="community-gallery" id="communityGallery"></div>
-    <div class="empty-state" id="emptyState" style="display:none">No uploads yet. Be the first.</div>
   </div>
 
   <footer>
