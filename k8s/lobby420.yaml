@@ -54,11 +54,11 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - lobby420.com
-        - www.lobby420.com
-      secretName: lobby420-tls
+        - 420lobby.com
+        - www.420lobby.com
+      secretName: 420lobby-tls
   rules:
-    - host: lobby420.com
+    - host: 420lobby.com
       http:
         paths:
           - path: /
@@ -68,7 +68,7 @@ spec:
                 name: lobby420
                 port:
                   number: 80
-    - host: www.lobby420.com
+    - host: www.420lobby.com
       http:
         paths:
           - path: /
