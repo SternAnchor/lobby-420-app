@@ -140,6 +140,10 @@
       top: 1rem;
       right: 1.5rem;
       z-index: 50;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .top-btn {
       background: rgba(201,169,110,0.15);
       border: 1px solid rgba(201,169,110,0.3);
       color: var(--gold);
@@ -147,13 +151,14 @@
       border-radius: 999px;
       font-size: 0.85rem;
       font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
       text-decoration: none;
       backdrop-filter: blur(10px);
       transition: all 0.3s;
       cursor: pointer;
       letter-spacing: 0.03em;
     }
-    .top-upload-link:hover {
+    .top-btn:hover {
       background: rgba(201,169,110,0.25);
       border-color: var(--gold);
     }
@@ -324,7 +329,11 @@
 </head>
 <body>
 
-  <a href="#uploadZone" class="top-upload-link">📸 Upload Photos</a>
+  <div class="top-upload-link">
+    <button class="top-btn" onclick="document.getElementById('topFileInput').click()">📸 Upload</button>
+    <button class="top-btn" onclick="startSlideshow()">▶ Slideshow</button>
+  </div>
+  <input type="file" id="topFileInput" multiple accept="image/*" capture="environment" style="display:none">
 
   <div class="hero">
     <div class="smoke-container">
@@ -549,6 +558,30 @@
       const diff = e.changedTouches[0].screenX - touchStartX;
       if (Math.abs(diff) > 50) navLightbox(diff > 0 ? -1 : 1);
     }, {passive:true});
+
+    // Slideshow
+    let slideshowTimer = null;
+    function startSlideshow() {
+      if (galleryImages.length === 0) { alert('No photos yet — upload some first!'); return; }
+      openLightbox(0);
+      lightboxCounter.textContent = `▶ Slideshow — 1 / ${galleryImages.length}`;
+      slideshowTimer = setInterval(() => {
+        navLightbox(1);
+        lightboxCounter.textContent = `▶ Slideshow — ${currentLightboxIndex + 1} / ${galleryImages.length}`;
+      }, 4000);
+    }
+    const origClose = closeLightbox;
+    closeLightbox = function() {
+      if (slideshowTimer) { clearInterval(slideshowTimer); slideshowTimer = null; }
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    // Top upload button
+    document.getElementById('topFileInput').addEventListener('change', function() {
+      if (this.files.length) uploadFiles(this.files);
+      this.value = '';
+    });
 
     // Load community gallery on page load
     loadGallery();
