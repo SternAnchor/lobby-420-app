@@ -133,6 +133,29 @@
     }
     .hero-location svg { width: 14px; height: 14px; fill: rgba(201,169,110,0.6); }
 
+    .top-upload-link {
+      position: fixed;
+      top: 1rem;
+      right: 1.5rem;
+      z-index: 50;
+      background: rgba(201,169,110,0.15);
+      border: 1px solid rgba(201,169,110,0.3);
+      color: var(--gold);
+      padding: 0.5rem 1.25rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+    }
+    .top-upload-link:hover {
+      background: rgba(201,169,110,0.25);
+      border-color: var(--gold);
+    }
+
     section { padding: 5rem 2rem; max-width: 800px; margin: 0 auto; }
     section h2 {
       font-family: 'DM Serif Display', serif;
@@ -298,6 +321,8 @@
   </style>
 </head>
 <body>
+
+  <a href="#uploadZone" class="top-upload-link">📸 Upload Photos</a>
 
   <div class="hero">
     <div class="smoke-container">
