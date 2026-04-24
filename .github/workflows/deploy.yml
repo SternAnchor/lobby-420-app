@@ -31,16 +31,12 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_TOKEN }}
+
       - name: Deploy to K8s
-        env:
-          DOCTL_TOKEN: ${{ secrets.DO_TOKEN }}
         run: |
-          # Install doctl + kubectl
-          curl -sL https://github.com/digitalocean/doctl/releases/latest/download/doctl-1.115.0-linux-amd64.tar.gz | tar xz
-          sudo mv doctl /usr/local/bin/
-          doctl auth init -t "$DOCTL_TOKEN"
           doctl kubernetes cluster kubeconfig save sternanchor
-          
-          # Update image
-          kubectl set image deployment/lobby420 web=registry.digitalocean.com/sternanchor/lobby-420:${{ github.sha }} -n default 2>/dev/null || \
-          kubectl apply -f k8s/ -n default
+          kubectl set image deployment/lobby420 web=registry.digitalocean.com/sternanchor/lobby-420:${{ github.sha }} -n default
