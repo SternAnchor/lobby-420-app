@@ -258,8 +258,14 @@
       animation: fadeIn 0.5s ease;
     }
     @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    .community-gallery .gallery-item img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85); cursor: pointer; }
-    .community-gallery .gallery-item:hover img { filter: saturate(1); }
+    .community-gallery .gallery-item img, .community-gallery .gallery-item video { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85); cursor: pointer; }
+    .community-gallery .gallery-item:hover img, .community-gallery .gallery-item:hover video { filter: saturate(1); }
+    .community-gallery .gallery-item .video-badge {
+      position: absolute; bottom: 0.5rem; right: 0.5rem;
+      background: rgba(0,0,0,0.6); color: #fff; padding: 0.2rem 0.5rem;
+      border-radius: 4px; font-size: 0.7rem; pointer-events: none;
+    }
+    .community-gallery .gallery-item { position: relative; }
 
     /* Lightbox */
     .lightbox {
@@ -273,7 +279,7 @@
       justify-content: center;
     }
     .lightbox.active { display: flex; }
-    .lightbox img {
+    .lightbox img, .lightbox video {
       max-width: 90vw;
       max-height: 85vh;
       object-fit: contain;
@@ -337,7 +343,7 @@
     <button class="top-btn" onclick="document.getElementById('topFileInput').click()">📸 Add Pics</button>
     <button class="top-btn" onclick="startSlideshow()">▶ Slideshow</button>
   </div>
-  <input type="file" id="topFileInput" multiple accept="image/*" capture="environment" style="display:none">
+  <input type="file" id="topFileInput" multiple accept="image/*,video/*" capture="environment" style="display:none">
 
   <div class="hero">
     <div class="smoke-container">
@@ -370,9 +376,9 @@
     <div class="upload-zone" id="uploadZone">
       <div class="icon">📸</div>
       <p>Tap to upload or drag photos here</p>
-      <p class="hint">JPG, PNG, WEBP — up to 15MB each, 10 at a time</p>
+      <p class="hint">Photos &amp; videos — up to 100MB each, 10 at a time</p>
     </div>
-    <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+    <input type="file" id="fileInput" multiple accept="image/*,video/*" style="display:none">
 
     <div class="upload-progress" id="uploadProgress">Uploading...</div>
 
@@ -417,7 +423,7 @@
   <div class="lightbox" id="lightbox">
     <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
     <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">‹</button>
-    <img id="lightboxImg" src="" alt="Photo">
+    <div id="lightboxMedia"></div>
     <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">›</button>
     <div class="lightbox-counter" id="lightboxCounter"></div>
   </div>
@@ -503,7 +509,7 @@
     let galleryImages = [];
     let currentLightboxIndex = 0;
     const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxMedia = document.getElementById('lightboxMedia');
     const lightboxCounter = document.getElementById('lightboxCounter');
 
     async function loadGallery() {
@@ -517,9 +523,12 @@
           return;
         }
         emptyState.style.display = 'none';
-        gallery.innerHTML = images.map((img, i) =>
-          `<div class="gallery-item"><img src="${img.url}" alt="Community upload" loading="lazy" onclick="openLightbox(${i})"></div>`
-        ).join('');
+        gallery.innerHTML = images.map((img, i) => {
+          if (img.type === 'video') {
+            return `<div class="gallery-item" onclick="openLightbox(${i})"><video src="${img.url}" muted preload="metadata"></video><span class="video-badge">▶ Video</span></div>`;
+          }
+          return `<div class="gallery-item"><img src="${img.url}" alt="Upload" loading="lazy" onclick="openLightbox(${i})"></div>`;
+        }).join('');
       } catch(e) {
         // Gallery load failed silently
       }
@@ -534,14 +543,20 @@
     function closeLightbox() {
       lightbox.classList.remove('active');
       document.body.style.overflow = '';
+      lightboxMedia.innerHTML = '';
     }
     function navLightbox(dir) {
       currentLightboxIndex = (currentLightboxIndex + dir + galleryImages.length) % galleryImages.length;
       updateLightbox();
     }
     function updateLightbox() {
-      if (!galleryImages[currentLightboxIndex]) return;
-      lightboxImg.src = galleryImages[currentLightboxIndex].url;
+      const item = galleryImages[currentLightboxIndex];
+      if (!item) return;
+      if (item.type === 'video') {
+        lightboxMedia.innerHTML = `<video src="${item.url}" controls autoplay style="max-width:90vw;max-height:85vh;border-radius:8px;"></video>`;
+      } else {
+        lightboxMedia.innerHTML = `<img src="${item.url}" alt="Photo" style="max-width:90vw;max-height:85vh;object-fit:contain;border-radius:8px;">`;
+      }
       lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${galleryImages.length}`;
     }
     // Keyboard navigation
