@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lobby 420</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #4a7c59;
+      --sage: #a8c5a0;
+      --gold: #c9a96e;
+      --cream: #f5f0e8;
+      --charcoal: #2c2c2c;
+      --glass: rgba(255,255,255,0.06);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #111;
+      color: var(--cream);
+      overflow-x: hidden;
+    }
+
+    .music-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(201,169,110,0.15);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .music-bar button {
+      background: none;
+      border: 1px solid rgba(201,169,110,0.4);
+      color: var(--gold);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .music-bar button:hover { background: rgba(201,169,110,0.15); }
+    .music-bar .now-playing {
+      font-size: 0.8rem;
+      color: rgba(245,240,232,0.4);
+      letter-spacing: 0.05em;
+    }
+    .eq-bars { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
+    .eq-bars .bar {
+      width: 2px; background: var(--gold); border-radius: 1px; opacity: 0.6;
+      animation: eq 1s ease-in-out infinite alternate;
+    }
+    .eq-bars .bar:nth-child(1) { height: 6px; animation-delay: 0s; }
+    .eq-bars .bar:nth-child(2) { height: 12px; animation-delay: 0.2s; }
+    .eq-bars .bar:nth-child(3) { height: 8px; animation-delay: 0.4s; }
+    .eq-bars .bar:nth-child(4) { height: 14px; animation-delay: 0.1s; }
+    .eq-bars .bar:nth-child(5) { height: 10px; animation-delay: 0.3s; }
+    .eq-bars.paused .bar { animation-play-state: paused; }
+    @keyframes eq { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 2rem 4rem;
+      position: relative;
+      background: linear-gradient(180deg, #0a0a0a 0%, #141412 40%, #111 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 60%, rgba(201,169,110,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .smoke-container { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .smoke {
+      position: absolute; bottom: -10%; width: 300px; height: 300px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,240,232,0.02) 0%, transparent 70%);
+      animation: rise 14s infinite ease-out;
+    }
+    .smoke:nth-child(2) { left: 25%; animation-delay: 3s; width: 200px; height: 200px; }
+    .smoke:nth-child(3) { left: 55%; animation-delay: 7s; width: 250px; height: 250px; }
+    .smoke:nth-child(4) { left: 70%; animation-delay: 1.5s; width: 180px; height: 180px; }
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0; }
+      10% { opacity: 0.6; }
+      100% { transform: translateY(-110vh) scale(2); opacity: 0; }
+    }
+
+    .hero-badge {
+      display: inline-block; background: transparent;
+      border: 1px solid rgba(201,169,110,0.25); border-radius: 999px;
+      padding: 0.5rem 1.5rem; font-size: 0.75rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3.5rem, 10vw, 8rem); line-height: 0.9;
+      margin-bottom: 0.25rem; letter-spacing: -0.02em;
+    }
+    .hero h1 .four { color: var(--sage); }
+    .hero h1 .twenty { color: var(--gold); }
+    .hero-subtitle {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+      color: rgba(245,240,232,0.5); margin-top: 0.5rem; font-weight: 400; letter-spacing: 0.05em;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem); color: rgba(245,240,232,0.45);
+      max-width: 550px; margin: 2rem auto; line-height: 1.7;
+    }
+    .hero-location {
+      display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem;
+      color: rgba(201,169,110,0.6); letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .hero-location svg { width: 14px; height: 14px; fill: rgba(201,169,110,0.6); }
+
+    section { padding: 5rem 2rem; max-width: 800px; margin: 0 auto; }
+    section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem); color: var(--cream); margin-bottom: 1.5rem; font-weight: 400;
+    }
+    section p { font-size: 1.05rem; line-height: 1.9; color: rgba(245,240,232,0.55); margin-bottom: 1.5rem; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 2rem; }
+    .card {
+      background: rgba(245,240,232,0.03); border: 1px solid rgba(245,240,232,0.06);
+      border-radius: 12px; padding: 2rem 1.5rem; transition: transform 0.3s, border-color 0.3s;
+    }
+    .card:hover { transform: translateY(-3px); border-color: rgba(201,169,110,0.2); }
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .card h3 { font-size: 1rem; color: var(--gold); margin-bottom: 0.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+    .card p { font-size: 0.9rem; color: rgba(245,240,232,0.45); margin: 0; line-height: 1.6; }
+
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.75rem; margin-top: 2rem; }
+    .gallery-item {
+      aspect-ratio: 1; background: rgba(245,240,232,0.03);
+      border-radius: 8px; overflow: hidden; border: 1px solid rgba(245,240,232,0.05);
+    }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; filter: saturate(0.85); }
+    .gallery-item:hover img { transform: scale(1.05); filter: saturate(1); }
+
+    .divider { text-align: center; padding: 2rem; }
+    .divider-line { width: 60px; height: 1px; background: rgba(201,169,110,0.2); margin: 0 auto; }
+
+    .cta { text-align: center; padding: 5rem 2rem 3rem; }
+    .cta h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.5rem); color: var(--cream); font-weight: 400; }
+    .cta p { font-size: 1rem; color: rgba(245,240,232,0.35); margin: 1rem auto; max-width: 450px; line-height: 1.7; }
+
+    /* Upload Section */
+    .upload-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 8rem;
+      text-align: center;
+    }
+    .upload-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      color: var(--cream);
+      font-weight: 400;
+      margin-bottom: 0.75rem;
+    }
+    .upload-section .subtitle {
+      color: rgba(245,240,232,0.4);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .upload-zone {
+      border: 2px dashed rgba(201,169,110,0.25);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: rgba(245,240,232,0.02);
+      margin-bottom: 2rem;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--gold);
+      background: rgba(201,169,110,0.05);
+    }
+    .upload-zone .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .upload-zone p { color: rgba(245,240,232,0.5); font-size: 1rem; }
+    .upload-zone .hint { font-size: 0.8rem; color: rgba(245,240,232,0.25); margin-top: 0.5rem; }
+
+    .upload-progress {
+      display: none;
+      margin: 1rem auto;
+      color: var(--gold);
+      font-size: 0.9rem;
+    }
+
+    .community-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+    .community-gallery .gallery-item {
+      aspect-ratio: 1;
+      background: rgba(245,240,232,0.03);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(245,240,232,0.05);
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    .community-gallery .gallery-item img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85); }
+    .community-gallery .gallery-item:hover img { filter: saturate(1); }
+
+    .empty-state { color: rgba(245,240,232,0.25); font-size: 0.9rem; padding: 2rem; }
+
+    footer {
+      text-align: center; padding: 2rem 2rem 5rem;
+      color: rgba(245,240,232,0.2); font-size: 0.8rem;
+      border-top: 1px solid rgba(245,240,232,0.04); letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="smoke-container">
+      <div class="smoke"></div><div class="smoke"></div><div class="smoke"></div><div class="smoke"></div>
+    </div>
+    <div class="hero-badge">April 23–26, 2026 &bull; California &bull; Still going</div>
+    <h1><span class="four">4</span><span class="twenty">20</span></h1>
+    <div class="hero-subtitle">Lobby</div>
+    <p class="hero-sub">We were too busy on 4/20 to celebrate. So we started Wednesday night in the hotel lobby and haven't stopped. It's Friday now. The party moves to HQ tonight and runs through Saturday. You're welcome to catch up.</p>
+    <div class="hero-location">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      California
+    </div>
+  </div>
+
+  <section>
+    <h2>The Lobby</h2>
+    <p>The hotel lobby bar. You know the one — recessed lighting, white marble, those tall chairs nobody sits comfortably in. A TV on mute showing CNN. The bartender polishing glasses that are already clean. It's quiet, it's sterile, it smells like nothing.</p>
+    <p>Then the crew showed up. One by one, filling the barstools and the couches nearby. The elevator music still playing overhead, but now there's laughter over it. The bartender's actually busy. The lobby that was built for silence got loud — the good kind of loud.</p>
+    <p>The hotel bar tonight. Maybe Hangar 24 Friday afternoon. Then a big shebang Friday night. This party doesn't end — it just changes venues.</p>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <section>
+    <h2>The Night</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🏨</div>
+        <h3>The Setting</h3>
+        <p>A sterile hotel lobby bar. White marble, recessed lighting, CNN on mute. The kind of place that's usually dead by 9pm. Not tonight.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎶</div>
+        <h3>The Background</h3>
+        <p>Elevator music nobody chose but everyone appreciated. The real soundtrack was the drone of a dozen conversations happening at once — all of them good.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌿</div>
+        <h3>The Occasion</h3>
+        <p>4/20 was a workday. We did our jobs. Then we started celebrating Wednesday and frankly we're still going. Friday night at HQ, rolling into Saturday.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">😄</div>
+        <h3>The Mood</h3>
+        <p>Jovial. That's the only word for it. Everybody loose, everybody laughing, the kind of collective good mood that makes a random hotel lobby feel like the best place on earth.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <section>
+    <h2>The Evidence</h2>
+    <p>Proof that the best nights aren't planned — they just happen in a hotel lobby when the right people show up.</p>
+    <div class="gallery">
+      <div class="gallery-item"><img src="photo3.jpg" alt="The crew"></div>
+      <div class="gallery-item"><img src="photo1.jpg" alt="Lobby night"></div>
+      <div class="gallery-item"><img src="photo2.jpg" alt="Good times"></div>
+    </div>
+  </section>
+
+  <div class="cta">
+    <h2>Currently in Progress</h2>
+    <p>Hotel lobby bar → Hangar 24 Friday afternoon → the big shebang Friday night. Keep up.</p>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Upload Section -->
+  <div class="upload-section">
+    <h2>Drop Your Photos</h2>
+    <p class="subtitle">Got pics from the lobby? The bar? The aftermath? Upload them here.</p>
+
+    <div class="upload-zone" id="uploadZone">
+      <div class="icon">📸</div>
+      <p>Tap to upload or drag photos here</p>
+      <p class="hint">JPG, PNG, WEBP — up to 15MB each, 10 at a time</p>
+    </div>
+    <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+
+    <div class="upload-progress" id="uploadProgress">Uploading...</div>
+
+    <div class="community-gallery" id="communityGallery"></div>
+    <div class="empty-state" id="emptyState" style="display:none">No uploads yet. Be the first.</div>
+  </div>
+
+  <footer>
+    <p>Lobby 420 &bull; California &bull; 2026</p>
+    <p style="margin-top:0.5rem;">21+ &bull; Consume responsibly &bull; Legal in California</p>
+  </footer>
+
+  <!-- Background ambiance -->
+  <div id="ytPlayer" style="position:fixed;top:-1000px;left:-1000px;width:1px;height:1px;overflow:hidden;pointer-events:none;"></div>
+
+  <div class="music-bar">
+    <div class="eq-bars paused" id="eqBars">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    </div>
+    <div class="now-playing">Lobby Ambience</div>
+    <button id="playBtn" onclick="toggleMusic()" aria-label="Play/Pause ambience">▶</button>
+    <input type="range" id="volSlider" min="0" max="100" value="30" style="width:70px;accent-color:rgba(201,169,110,0.6);cursor:pointer;" oninput="setVol(this.value)">
+  </div>
+
+  <script>
+    // Music
+    let player, isPlaying = false;
+    const playBtn = document.getElementById('playBtn');
+    const eqBars = document.getElementById('eqBars');
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('ytPlayer', {
+        height:'1', width:'1', videoId:'gKbIOobOMVQ',
+        playerVars:{autoplay:0,loop:1,playlist:'gKbIOobOMVQ',controls:0},
+        events:{onReady:function(e){e.target.setVolume(30);}}
+      });
+    }
+    function toggleMusic() {
+      if(!player) return;
+      if(isPlaying){player.pauseVideo();playBtn.textContent='▶';eqBars.classList.add('paused');}
+      else{player.playVideo();playBtn.textContent='⏸';eqBars.classList.remove('paused');}
+      isPlaying=!isPlaying;
+    }
+    function setVol(v){if(player&&player.setVolume)player.setVolume(parseInt(v));}
+
+    // Upload functionality
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const progress = document.getElementById('uploadProgress');
+    const gallery = document.getElementById('communityGallery');
+    const emptyState = document.getElementById('emptyState');
+
+    uploadZone.addEventListener('click', () => fileInput.click());
+    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+    uploadZone.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) uploadFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', () => { if(fileInput.files.length) uploadFiles(fileInput.files); });
+
+    async function uploadFiles(files) {
+      const formData = new FormData();
+      for (let f of files) formData.append('photos', f);
+      progress.style.display = 'block';
+      progress.textContent = `Uploading ${files.length} photo${files.length>1?'s':''}...`;
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.success) {
+          progress.textContent = `✅ ${data.files.length} photo${data.files.length>1?'s':''} uploaded!`;
+          setTimeout(() => { progress.style.display = 'none'; }, 3000);
+          loadGallery();
+        } else {
+          progress.textContent = '❌ Upload failed — try again';
+        }
+      } catch(e) {
+        progress.textContent = '❌ Upload failed — try again';
+      }
+      fileInput.value = '';
+    }
+
+    async function loadGallery() {
+      try {
+        const res = await fetch('/api/images');
+        const images = await res.json();
+        if (images.length === 0) {
+          emptyState.style.display = 'block';
+          gallery.innerHTML = '';
+          return;
+        }
+        emptyState.style.display = 'none';
+        gallery.innerHTML = images.map(img =>
+          `<div class="gallery-item"><img src="${img.url}" alt="Community upload" loading="lazy"></div>`
+        ).join('');
+      } catch(e) {
+        // Gallery load failed silently
+      }
+    }
+
+    // Load community gallery on page load
+    loadGallery();
+  </script>
+
+</body>
+</html>
