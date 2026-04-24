@@ -525,7 +525,11 @@
         emptyState.style.display = 'none';
         gallery.innerHTML = images.map((img, i) => {
           if (img.type === 'video') {
-            return `<div class="gallery-item" onclick="openLightbox(${i})"><video src="${img.url}" muted preload="metadata"></video><span class="video-badge">▶ Video</span></div>`;
+            const thumbSrc = img.thumb || img.url;
+            const thumbTag = img.thumb
+              ? `<img src="${img.thumb}" alt="Video thumbnail" loading="lazy">`
+              : `<video src="${img.url}" muted preload="metadata"></video>`;
+            return `<div class="gallery-item" onclick="openLightbox(${i})">${thumbTag}<span class="video-badge">▶ Video</span></div>`;
           }
           return `<div class="gallery-item"><img src="${img.url}" alt="Upload" loading="lazy" onclick="openLightbox(${i})"></div>`;
         }).join('');
