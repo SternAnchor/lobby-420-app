@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How This Site Was Made — 420 Lobby</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #c9a96e;
+      --cream: #f5f0e8;
+      --sage: #a8c5a0;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #111;
+      color: var(--cream);
+      overflow-x: hidden;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2rem 2rem 0;
+      max-width: 800px;
+      margin: 0 auto;
+      display: block;
+      transition: opacity 0.3s;
+    }
+    .back-link:hover { opacity: 0.7; }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem 3rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: rgba(245,240,232,0.5);
+      line-height: 1.8;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .elaine-card {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 1.5rem;
+      background: rgba(245,240,232,0.03);
+      border: 1px solid rgba(245,240,232,0.08);
+      border-radius: 12px;
+    }
+    .elaine-card img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(201,169,110,0.3);
+    }
+    .elaine-card .info h3 {
+      font-size: 1.1rem;
+      color: var(--cream);
+      margin-bottom: 0.25rem;
+    }
+    .elaine-card .info p {
+      font-size: 0.9rem;
+      color: rgba(245,240,232,0.45);
+      line-height: 1.5;
+      margin: 0;
+    }
+    .elaine-card .info .badge {
+      display: inline-block;
+      margin-top: 0.5rem;
+      background: rgba(201,169,110,0.12);
+      border: 1px solid rgba(201,169,110,0.25);
+      border-radius: 999px;
+      padding: 0.2rem 0.75rem;
+      font-size: 0.75rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+    }
+
+    section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: var(--cream);
+      margin-bottom: 1.25rem;
+      font-weight: 400;
+    }
+    section p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: rgba(245,240,232,0.55);
+      margin-bottom: 1.25rem;
+    }
+
+    .divider {
+      text-align: center;
+      padding: 1rem;
+    }
+    .divider-line {
+      width: 60px;
+      height: 1px;
+      background: rgba(201,169,110,0.2);
+      margin: 0 auto;
+    }
+
+    .screenshots {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: 2rem auto;
+      max-width: 500px;
+    }
+    .screenshots img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(245,240,232,0.08);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .screenshots .caption {
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(245,240,232,0.3);
+      letter-spacing: 0.05em;
+      margin-top: -0.5rem;
+    }
+
+    .timeline {
+      max-width: 600px;
+      margin: 2rem auto;
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(201,169,110,0.15);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 1rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2.35rem;
+      top: 0.5rem;
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+    .timeline-item .time {
+      font-size: 0.75rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+    .timeline-item p {
+      font-size: 0.95rem;
+      color: rgba(245,240,232,0.5);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .tech-stack {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .tech-item {
+      background: rgba(245,240,232,0.03);
+      border: 1px solid rgba(245,240,232,0.06);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .tech-item .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .tech-item .label {
+      font-size: 0.8rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .tech-item .desc {
+      font-size: 0.8rem;
+      color: rgba(245,240,232,0.35);
+      margin-top: 0.25rem;
+    }
+
+    .openclaw-plug {
+      text-align: center;
+      padding: 4rem 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .openclaw-plug p {
+      font-size: 0.95rem;
+      color: rgba(245,240,232,0.35);
+      line-height: 1.7;
+    }
+    .openclaw-plug a {
+      color: var(--gold);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .openclaw-plug a:hover { opacity: 0.7; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: rgba(245,240,232,0.15);
+      font-size: 0.75rem;
+      border-top: 1px solid rgba(245,240,232,0.04);
+    }
+  </style>
+</head>
+<body>
+
+  <a href="/" class="back-link">← Back to 420 Lobby</a>
+
+  <div class="hero">
+    <h1>This Website Was<br>Vibe Coded Over Slack</h1>
+    <p>No Figma. No wireframes. No project plan. Just a guy at a party texting his AI bot on Slack, and the bot building the site in real time.</p>
+  </div>
+
+  <div class="elaine-card">
+    <img src="/elaine-avatar.png" alt="Elaine">
+    <div class="info">
+      <h3>Elaine ⚓</h3>
+      <p>AI assistant built on <a href="https://openclaw.ai" style="color:var(--gold);">OpenClaw</a>. She reads Slack messages, writes code, registers domains, deploys to Kubernetes, and occasionally has opinions about things.</p>
+      <span class="badge">The bot who built this site</span>
+    </div>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <section>
+    <h2>The Story</h2>
+    <p>On the evening of April 24, 2026, Nat was sitting in a hotel lobby in California with his crew, celebrating 4/20 a few days late. Instead of hiring a designer or opening a code editor, he just started texting Elaine on Slack.</p>
+    <p>"Build me a website about a group of people celebrating 4/20 in a hotel lobby bar."</p>
+    <p>That was the brief. From there, the conversation went back and forth — Nat describing the vibe, Elaine writing the code, registering the domains, deploying to a Kubernetes cluster, and iterating based on feedback. All via Slack DMs, while Nat was at the party.</p>
+    <p>The next day, the party moved to HQ. Nat texted updates: the music was too loud, everyone was yelling over it, shirts were flying off the printing presses, pool and beer pong going all night, the dab bar never slowed down, and the Alice in Wonderland theme was in full effect. Elaine updated the site in real time.</p>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <section>
+    <h2>The Conversation</h2>
+    <p>Here's what it actually looked like — Nat texting from the party, Elaine building in the background:</p>
+    <div class="screenshots">
+      <img src="/slack-screenshot-1.jpg" alt="Slack conversation — building the 420 Lobby site">
+      <img src="/slack-screenshot-2.jpg" alt="Slack conversation — iterating on the site">
+      <p class="caption">Real screenshots from the Slack DM. No staging.</p>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <section>
+    <h2>How It Happened</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="time">April 24, Evening</div>
+        <p>Nat sends the initial request from the hotel lobby bar. Elaine builds the first version — hero section, vibe copy, smoke animations, ambient lobby music via YouTube.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Minutes Later</div>
+        <p>Domains registered (lobby420.com and 420lobby.com), DNS configured, GitHub repo created, Kubernetes deployment live. Site goes from idea to production in one conversation.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">That Night</div>
+        <p>Nat sends party photos via Slack. Elaine adds a photo gallery, then builds a community upload feature so anyone at the party can add their own photos. Photo uploads, lightbox viewer, video thumbnail generation — all built over chat.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">April 25, Afternoon</div>
+        <p>The party moves to HQ. Nat texts the recap: music blasting, yelling through it, pool, beer pong, dab bar, shirts off the presses, Alice in Wonderland theme. Elaine adds the Headquarters section and updates the whole site to past tense.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Later That Day</div>
+        <p>"Replace Hangar 24 with Holy Moly." Done. "Add two more cards — dab bar and the Mad Hatter's throne, plus the limo buses." Done. Each update deployed automatically on push.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Right Now</div>
+        <p>Nat asked Elaine to create this page. So she did. You're reading the result.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <section>
+    <h2>The Stack</h2>
+    <p>Everything Elaine set up, deployed, and maintained — all from Slack messages:</p>
+    <div class="tech-stack">
+      <div class="tech-item">
+        <div class="icon">💬</div>
+        <div class="label">Slack</div>
+        <div class="desc">The only interface</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🤖</div>
+        <div class="label">OpenClaw</div>
+        <div class="desc">AI agent platform</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🐙</div>
+        <div class="label">GitHub</div>
+        <div class="desc">Source control + CI/CD</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🐳</div>
+        <div class="label">Docker</div>
+        <div class="desc">Container builds</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">☸️</div>
+        <div class="label">Kubernetes</div>
+        <div class="desc">DigitalOcean K8s</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🌐</div>
+        <div class="label">Namecheap</div>
+        <div class="desc">Domain registration</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="openclaw-plug">
+    <p>Built with <a href="https://openclaw.ai">OpenClaw</a> — an open-source AI agent that lives in your chat apps. Give it access to your tools, talk to it like a person, and let it handle the rest.</p>
+    <p style="margin-top: 1rem; font-size: 0.85rem;">No code editor was opened in the making of this website.</p>
+  </div>
+
+  <footer>
+    <p>420 Lobby &bull; Vibe coded by Elaine ⚓ &bull; 2026</p>
+  </footer>
+
+</body>
+</html>
