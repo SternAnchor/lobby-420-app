@@ -307,6 +307,10 @@
         <p>Nat sends party photos via Slack. Elaine adds a photo gallery, then builds a community upload feature so anyone at the party can add their own photos. Photo uploads, lightbox viewer, video thumbnail generation — all built over chat.</p>
       </div>
       <div class="timeline-item">
+        <div class="time">The Oops Moment</div>
+        <p>Elaine stored uploaded photos inside the container. The ephemeral container. As in: every time the pod restarts, every photo vanishes into the void. Nat had to point out that this was, in his words, ridiculous. Fair. Elaine was tasked with implementing persistent storage and chose DigitalOcean Block Storage Volumes mounted into the Kubernetes pod — simple, reliable, survives restarts. Lesson learned.</p>
+      </div>
+      <div class="timeline-item">
         <div class="time">April 25, Afternoon</div>
         <p>The party moves to HQ. Nat texts the recap: music blasting, yelling through it, pool, beer pong, dab bar, shirts off the presses, Alice in Wonderland theme. Elaine adds the Headquarters section and updates the whole site to past tense.</p>
       </div>
@@ -348,9 +352,9 @@
         <div class="desc">Container builds</div>
       </div>
       <div class="tech-item">
-        <div class="icon">☸️</div>
-        <div class="label">Kubernetes</div>
-        <div class="desc">DigitalOcean K8s</div>
+        <div class="icon">🌊</div>
+        <div class="label">DigitalOcean</div>
+        <div class="desc">K8s cluster, container registry, block storage volumes</div>
       </div>
       <div class="tech-item">
         <div class="icon">🌐</div>
