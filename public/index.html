@@ -341,11 +341,9 @@
 
   <div class="top-upload-link">
     <a href="/how.html" class="top-btn" style="text-decoration:none;">🤖 How This Site Was Made</a>
-    <button class="top-btn" onclick="document.getElementById('topFileInput').click()">📸 Add Pics</button>
     <button class="top-btn" onclick="document.getElementById('topLibraryInput').click()">🖼️ Upload</button>
     <button class="top-btn" onclick="startSlideshow()">▶ Slideshow</button>
   </div>
-  <input type="file" id="topFileInput" multiple accept="image/*,video/*" style="display:none">
   <input type="file" id="topLibraryInput" multiple accept="image/*,video/*" style="display:none">
 
   <div class="hero">
@@ -622,10 +620,6 @@
     };
 
     // Top upload button
-    document.getElementById('topFileInput').addEventListener('change', function() {
-      if (this.files.length) uploadFiles(this.files);
-      this.value = '';
-    });
     document.getElementById('topLibraryInput').addEventListener('change', function() {
       if (this.files.length) uploadFiles(this.files);
       this.value = '';
