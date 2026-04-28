@@ -69,18 +69,31 @@ app.post('/api/gate', (req, res) => {
   return res.json({ success: false, message: "That's not it. Think harder... 🐇" });
 });
 
-// Gate middleware — protect everything except the gate itself, /how.html, and static assets needed by the gate
+// Public paths that don't require auth
+const PUBLIC_PATHS = new Set([
+  '/gate', '/gate.html', '/api/gate', '/favicon.svg',
+  '/how.html',
+  // Assets used by the public how page
+  '/slack-screenshot-1.jpg', '/slack-screenshot-2.jpg',
+  '/elaine-avatar.png', '/elaine-avatar-full.png'
+]);
+
+// Gate middleware — protect everything except explicitly public paths
 function gateMiddleware(req, res, next) {
-  // Allow gate page, gate API, and the how page through
-  if (req.path === '/gate' || req.path === '/gate.html' || req.path === '/api/gate' || req.path === '/how.html' || req.path === '/favicon.svg') {
+  if (PUBLIC_PATHS.has(req.path)) {
     return next();
   }
   // Check auth cookie
   if (verifyGateToken(req.cookies.lobby_gate)) {
     return next();
   }
-  // Redirect to gate
-  res.redirect('/gate');
+  // For browser navigation, redirect to gate
+  const accept = req.headers.accept || '';
+  if (accept.includes('text/html')) {
+    return res.redirect('/gate');
+  }
+  // For direct asset/API requests (curl, img tags, etc.), return 403
+  res.status(403).json({ error: 'Authentication required' });
 }
 
 app.use(gateMiddleware);
