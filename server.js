@@ -71,11 +71,7 @@ app.post('/api/gate', (req, res) => {
 
 // Public paths that don't require auth
 const PUBLIC_PATHS = new Set([
-  '/gate', '/gate.html', '/api/gate', '/favicon.svg',
-  '/how.html',
-  // Assets used by the public how page
-  '/slack-screenshot-1.jpg', '/slack-screenshot-2.jpg',
-  '/elaine-avatar.png', '/elaine-avatar-full.png'
+  '/gate', '/gate.html', '/api/gate', '/favicon.svg'
 ]);
 
 // Gate middleware — protect everything except explicitly public paths
