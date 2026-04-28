@@ -2,10 +2,88 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const { execFile } = require('child_process');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+// Gate secret — used to sign the auth cookie
+const GATE_SECRET = process.env.GATE_SECRET || 'lobby420-wonderland-2026';
+
+// Cookie-based gate auth
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Keywords that prove you know the theme
+const GATE_KEYWORDS = [
+  'alice', 'wonderland', 'rabbit hole', 'mad hatter', 'cheshire',
+  'queen of hearts', 'tea party', 'white rabbit', 'looking glass',
+  'down the rabbit', 'curiouser', 'off with', 'eat me', 'drink me',
+  'tweedledee', 'tweedledum', 'caterpillar', 'hookah', 'unbirthday'
+];
+
+function isValidGateAnswer(text) {
+  const lower = text.toLowerCase();
+  return GATE_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+function makeGateToken() {
+  const payload = `lobby420-authed-${Date.now()}`;
+  const hmac = crypto.createHmac('sha256', GATE_SECRET).update(payload).digest('hex');
+  return `${payload}.${hmac}`;
+}
+
+function verifyGateToken(token) {
+  if (!token || !token.includes('.')) return false;
+  const lastDot = token.lastIndexOf('.');
+  const payload = token.substring(0, lastDot);
+  const sig = token.substring(lastDot + 1);
+  const expected = crypto.createHmac('sha256', GATE_SECRET).update(payload).digest('hex');
+  return sig === expected;
+}
+
+// Serve the gate page
+app.get('/gate', (req, res) => {
+  if (verifyGateToken(req.cookies.lobby_gate)) {
+    return res.redirect('/');
+  }
+  res.sendFile(path.join(__dirname, 'public', 'gate.html'));
+});
+
+// Gate validation endpoint
+app.post('/api/gate', (req, res) => {
+  const answer = (req.body.answer || '').trim();
+  if (!answer) return res.json({ success: false, message: "You didn't say anything." });
+  if (isValidGateAnswer(answer)) {
+    const token = makeGateToken();
+    res.cookie('lobby_gate', token, {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      httpOnly: true,
+      sameSite: 'lax'
+    });
+    return res.json({ success: true });
+  }
+  return res.json({ success: false, message: "That's not it. Think harder... 🐇" });
+});
+
+// Gate middleware — protect everything except the gate itself, /how.html, and static assets needed by the gate
+function gateMiddleware(req, res, next) {
+  // Allow gate page, gate API, and the how page through
+  if (req.path === '/gate' || req.path === '/gate.html' || req.path === '/api/gate' || req.path === '/how.html' || req.path === '/favicon.svg') {
+    return next();
+  }
+  // Check auth cookie
+  if (verifyGateToken(req.cookies.lobby_gate)) {
+    return next();
+  }
+  // Redirect to gate
+  res.redirect('/gate');
+}
+
+app.use(gateMiddleware);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
